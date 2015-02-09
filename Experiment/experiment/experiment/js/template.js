@@ -19,7 +19,7 @@ function make_slides(f) {
     name: "single_trial",
     start: function() {
       $(".err").hide();
-      $(".display_condition").html("You are in " + exp.condition + ".");
+      $("#manipulation").html("While Vicki is outside playing, her sister,<br> Denise, moves the violin to " + exp.condition + " container.");
     },
     button : function() {
       response_red = $("#text_response_red").val();
@@ -196,7 +196,7 @@ function make_slides(f) {
 function init() {
   exp.trials = [];
   exp.catch_trials = [];
-  exp.condition = _.sample(["CONDITION 1", "condition 2"]); //can randomize between subject conditions here
+  exp.condition = _.sample(["the red", "the purple", "another"]); //can randomize between subject conditions here
   exp.system = {
       Browser : BrowserDetect.browser,
       OS : BrowserDetect.OS,
