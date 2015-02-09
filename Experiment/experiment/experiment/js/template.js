@@ -43,119 +43,6 @@ function make_slides(f) {
     },
   });
 
-  slides.one_slider = slide({
-    name : "one_slider",
-
-    /* trial information for this block
-     (the variable 'stim' will change between each of these values,
-      and for each of these, present_handle will be run.) */
-    present : [
-      {subject: "dog", object: "ball"},
-      {subject: "cat", object: "windowsill"},
-      {subject: "bird", object: "shiny object"},
-    ],
-
-    //this gets run only at the beginning of the block
-    present_handle : function(stim) {
-      $(".err").hide();
-
-      this.stim = stim; //I like to store this information in the slide so I can record it later.
-
-
-      $(".prompt").html(stim.subject + "s like " + stim.object + "s.");
-      this.init_sliders();
-      exp.sliderPost = null; //erase current slider value
-    },
-
-    button : function() {
-      if (exp.sliderPost == null) {
-        $(".err").show();
-      } else {
-        this.log_responses();
-
-        /* use _stream.apply(this); if and only if there is
-        "present" data. (and only *after* responses are logged) */
-        _stream.apply(this);
-      }
-    },
-
-    init_sliders : function() {
-      utils.make_slider("#single_slider", function(event, ui) {
-        exp.sliderPost = ui.value;
-      });
-    },
-
-    log_responses : function() {
-      exp.data_trials.push({
-        "trial_type" : "one_slider",
-        "response" : exp.sliderPost
-      });
-    }
-  });
-
-  slides.multi_slider = slide({
-    name : "multi_slider",
-    present : _.shuffle([
-      {"critter":"Wugs", "property":"fur"},
-      {"critter":"Blicks", "property":"fur"}
-    ]),
-    present_handle : function(stim) {
-      $(".err").hide();
-      this.stim = stim; //FRED: allows you to access stim in helpers
-
-      this.sentence_types = _.shuffle(["generic", "negation", "always", "sometimes", "usually"]);
-      var sentences = {
-        "generic": stim.critter + " have " + stim.property + ".",
-        "negation": stim.critter + " do not have " + stim.property + ".",
-        "always": stim.critter + " always have " + stim.property + ".",
-        "sometimes": stim.critter + " sometimes have " + stim.property + ".",
-        "usually": stim.critter + " usually have " + stim.property + "."
-      };
-
-      this.n_sliders = this.sentence_types.length;
-      $(".slider_row").remove();
-      for (var i=0; i<this.n_sliders; i++) {
-        var sentence_type = this.sentence_types[i];
-        var sentence = sentences[sentence_type];
-        $("#multi_slider_table").append('<tr class="slider_row"><td class="slider_target" id="sentence' + i + '">' + sentence + '</td><td colspan="2"><div id="slider' + i + '" class="slider">-------[ ]--------</div></td></tr>');
-        utils.match_row_height("#multi_slider_table", ".slider_target");
-      }
-
-      this.init_sliders(this.sentence_types);
-      exp.sliderPost = [];
-    },
-
-    button : function() {
-      if (exp.sliderPost.length < this.n_sliders) {
-        $(".err").show();
-      } else {
-        this.log_responses();
-        _stream.apply(this); //use _stream.apply(this); if and only if there is "present" data.
-      }
-    },
-
-    init_sliders : function(sentence_types) {
-      for (var i=0; i<sentence_types.length; i++) {
-        var sentence_type = sentence_types[i];
-        utils.make_slider("#slider" + i, this.make_slider_callback(i));
-      }
-    },
-    make_slider_callback : function(i) {
-      return function(event, ui) {
-        exp.sliderPost[i] = ui.value;
-      };
-    },
-    log_responses : function() {
-      for (var i=0; i<this.sentence_types.length; i++) {
-        var sentence_type = this.sentence_types[i];
-        exp.data_trials.push({
-          "trial_type" : "multi_slider",
-          "sentence_type" : sentence_type,
-          "response" : exp.sliderPost[i]
-        });
-      }
-    },
-  });
 
   slides.subj_info =  slide({
     name : "subj_info",
@@ -206,7 +93,7 @@ function init() {
       screenUW: exp.width
     };
   //blocks of the experiment:
-  exp.structure=["i0", "instructions", "single_trial", "one_slider", "multi_slider", 'subj_info', 'thanks'];
+  exp.structure=["i0", "instructions", "single_trial", 'subj_info', 'thanks'];
   
   exp.data_trials = [];
   //make corresponding slides:
