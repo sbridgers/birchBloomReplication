@@ -3,3 +3,28 @@
 	width: 400;
 	margin: 10px;
 }
+
+INPUT#text_response_red {
+	height:30px;
+	width:40px;
+}
+
+INPUT#text_response_green {
+	height:30px;
+	width:40px;
+}
+
+INPUT#text_response_purple {
+	height:30px;
+	width:40px;
+}
+
+INPUT#text_response_blue {
+	height:30px;
+	width:40px;
+}
+
+div#single_trial{
+overflow: -moz-scrollbars-vertical;
+overflow-y:scroll;
+}
