@@ -102,9 +102,9 @@ textarea {
 	background: transparent;
 }
 
-#cocologo {
-    width: 200px;
-    margin: 10px;
+#sll_logo {
+    width: 400px;
+    margin: 20px;
 }
 
 .slider {
@@ -125,7 +125,7 @@ textarea {
 
 .bar-wrapper{
     height:20px;
-    width:200px;
+    width:100px;
     border:1px solid #000000;
     display:inline-block;
 }
@@ -136,3 +136,4 @@ textarea {
     width:0px;
     background-color:#000000
 }
+
