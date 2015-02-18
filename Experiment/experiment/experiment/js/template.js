@@ -31,6 +31,10 @@ function make_slides(f) {
       response_purple.length == 0 | response_blue.length == 0) {
         $(".err").show();
       } else {
+      if (isNaN(response_red) == true | isNaN(response_green) == true | 
+      isNaN(response_purple) == true | isNaN(response_blue) == true) {
+        $(".err").show();
+      } else {
         exp.data_trials.push({
           "trial_type" : "single_trial",
           "response_red" : response_red,
@@ -39,7 +43,7 @@ function make_slides(f) {
           "response_blue" : response_blue  
         });
         exp.go(); //make sure this is at the *end*, after you log your data
-      }
+      }}
     },
   });
 

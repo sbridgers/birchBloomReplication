@@ -24,7 +24,70 @@ INPUT#text_response_blue {
 	width:40px;
 }
 
-div#single_trial{
+/*div#single_trial{
 overflow: -moz-scrollbars-vertical;
 overflow-y:scroll;
+}*/
+
+html {overflow-y:scroll;}
+
+.image-div {
+background-image: url("../images/bottomNew.png");
+width:800px;
+height: 520px;
+background-size: 800px 520px;
+position: relative;
 }
+
+.absolute-div-red {
+position: absolute;
+left: 13%;
+bottom: 20%;
+}
+
+.absolute-div-green {
+position: absolute;
+left: 42%;
+bottom: 4%;
+}
+
+.absolute-div-purple {
+position: absolute;
+right: 15%;
+bottom: 7%;
+}
+
+.absolute-div-blue {
+position: absolute;
+right: 9%;
+bottom: 37%;
+}
+
+div#single_trial
+{
+	overflow: scroll;
+}
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+}
+
+::-moz-scrollbar {
+	-moz-appearance: none;
+    width: 7px;	
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+::-moz-scrollbar-thumb {
+	border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -moz-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+

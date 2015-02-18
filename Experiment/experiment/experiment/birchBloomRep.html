@@ -40,8 +40,8 @@
   <noscript>This task requires JavaScript.</noscript>
 
   <div class="slide" id="i0" >
-    <img src="../_shared/images/cocologo.png" alt="Stanford CoCoLab" id="cocologo"></img>
-    <p id="cocolab">Stanford CoCoLab</p>
+    <img src="../_shared/images/sll_logo.png" alt="Stanford SLL" id="sll_logo"></img>
+    <p id="cocolab">Stanford Social Learning Lab</p>
     <p id="instruct-text">You will read a story and answer some questions about it. The HIT should take ~5 minutes. Please pay attention. Your answers are important to the advancement of science. Thanks!</p>
     <button id="start_button" type="button">Start Experiment</button>
     <p id="legal">Legal information: By answering the following questions, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact Sophie Bridgers at <a href="mailto://sbridge@stanford.edu">sbridge@stanford.edu</a> or Michael C. Frank, at mcfrank@stanford.edu. You must be  at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.</p>
@@ -58,42 +58,26 @@
     the blue container. Then she goes outside to play.</p>
     <img src="images/topNew4.png" width=800 alt="TOP"> </img> 
     <br>
-  <!--  
-    <img src="images/Blue.png" width=150 alt="TOP"> </img> 
-    <img src="images/Purple.png" width=150 alt="TOP"> </img> 
-    <img src="images/Red.png" width=150 alt="TOP"> </img> 
-    <img src="images/Green.png" width=150 alt="TOP"> </img>
-    <br>
--->    
-<!-- 
-      <p>While Vicki is outside playing, her sister,<br>
-    Denise, moves the violin to the red container.</p>
- -->
+
 	 <p id="manipulation"> </p><br>
     <img src="images/Denise.png" width=200 alt="DENISE"> </img> <br>
     
     <p>Then, Denise rearranges the containers in<br>
     the room until the room looks like the picture below.</p>
-    <img src="images/bottomNew.png" width=800 alt="TOP"> </img> <br>
-  <!--  
- <img src="images/Red.png" width=150 alt="TOP"> </img> 
- <img src="images/Green.png" width=150 alt="TOP"> </img> 
- <img src="images/Purple.png" width=150 alt="TOP"> </img> 
- <img src="images/Blue.png" width=150 alt="TOP"> </img><br>
-    -->
-    <input type="text" id="text_response_red"></input>%
-    <input type="text" id="text_response_green"></input>%
-	<input type="text" id="text_response_purple"></input>%
-	<input type="text" id="text_response_blue"></input>%
-    <br>
+    <div class="image-div">
+   <div class = "absolute-div-red"> <input type="text" id="text_response_red"></input>%</div>
+   <div class = "absolute-div-green"> <input type="text" id="text_response_green"></input>%</div>
+	<div class = "absolute-div-purple"> <input type="text" id="text_response_purple"></input>%</div>
+	<div class = "absolute-div-blue"> <input type="text" id="text_response_blue"></input>%</div>
+    </div><br>
     
     <p>When Vicki returns, she wants to play her violin. What are the chances<br>
     Vicki will first look for her violin in each of the above containers?<br>
     Type your answers as percentages in the spaces provided under<br>
     each container.</p>
     
-    <button onclick="_s.button()">Continue</button>
-    <p class="err">Please type your answers as numeric percentages in the spaces provided.</p>
+    <button onclick="_s.button()">Continue</button><br>
+    <p class="err">Please type your answers as numeric percentages in the spaces provided.</p><br>
   </div>
 
   <div class="slide"  id="subj_info">
