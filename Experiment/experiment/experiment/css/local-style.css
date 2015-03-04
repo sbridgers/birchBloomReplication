@@ -24,10 +24,17 @@ INPUT#text_response_blue {
 	width:40px;
 }
 
-/*div#single_trial{
-overflow: -moz-scrollbars-vertical;
-overflow-y:scroll;
-}*/
+.err {
+color: red
+}
+
+.err2 {
+color: red
+}
+
+.err3 {
+color: red
+}
 
 html {overflow-y:scroll;}
 
@@ -64,6 +71,33 @@ bottom: 37%;
 }
 
 div#single_trial
+{
+	overflow: scroll;
+}
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+}
+
+::-moz-scrollbar {
+	-moz-appearance: none;
+    width: 7px;	
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+::-moz-scrollbar-thumb {
+	border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -moz-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+div#color_check
 {
 	overflow: scroll;
 }
