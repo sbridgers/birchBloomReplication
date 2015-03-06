@@ -92,7 +92,7 @@ slides.color_check = slide({
         language : $("#language").val(),
         enjoyment : $("#enjoyment").val(),
         asses : $('input[name="assess"]:checked').val(),
-        colorblind : $('input[name="colorblind"]:checked').val(),
+        //colorblind : $('input[name="colorblind"]:checked').val(),
         age : $("#age").val(),
         gender : $("#gender").val(),
         education : $("#education").val(),
@@ -124,7 +124,7 @@ slides.color_check = slide({
 function init() {
   exp.trials = [];
   exp.catch_trials = [];
-  exp.condition = _.sample(["the red", "the purple", "another"]); //can randomize between subject conditions here
+  exp.condition = _.sample(["the red", "the purple", "another"]).bold(); //can randomize between subject conditions here
   exp.system = {
       Browser : BrowserDetect.browser,
       OS : BrowserDetect.OS,
@@ -134,7 +134,7 @@ function init() {
       screenUW: exp.width
     };
   //blocks of the experiment:
-  exp.structure=["i0", "instructions", "single_trial", "color_check", 'subj_info', 'thanks'];
+  exp.structure=["i0", "instructions", "single_trial", 'subj_info', 'thanks'];
   
   
   exp.data_trials = [];
