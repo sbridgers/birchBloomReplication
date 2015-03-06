@@ -48,25 +48,25 @@ position: relative;
 
 .absolute-div-red {
 position: absolute;
-left: 13%;
+left: 9%;
 bottom: 20%;
 }
 
 .absolute-div-green {
 position: absolute;
-left: 42%;
+left: 38%;
 bottom: 4%;
 }
 
 .absolute-div-purple {
 position: absolute;
-right: 15%;
+right: 12%;
 bottom: 7%;
 }
 
 .absolute-div-blue {
 position: absolute;
-right: 9%;
+right: 7%;
 bottom: 37%;
 }
 
