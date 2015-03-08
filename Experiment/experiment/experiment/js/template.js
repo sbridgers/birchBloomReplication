@@ -21,7 +21,7 @@ function make_slides(f) {
     start: function() {
       $(".err").hide();
       $(".err2").hide();
-      $("#manipulation").html("While Vicki is outside playing, her sister,<br> Denise, moves the violin to " + exp.condition + " container.");
+      $("#manipulation").html("While Vicki is outside playing, her sister,<br> Denise, moves the violin to <b>" + exp.condition + " container</b>.");
     },
     
     button : function() {
@@ -124,7 +124,7 @@ slides.color_check = slide({
 function init() {
   exp.trials = [];
   exp.catch_trials = [];
-  exp.condition = _.sample(["the red", "the purple", "another"]).bold(); //can randomize between subject conditions here
+  exp.condition = _.sample(["the red", "the purple", "another"]); //can randomize between subject conditions here
   exp.system = {
       Browser : BrowserDetect.browser,
       OS : BrowserDetect.OS,
