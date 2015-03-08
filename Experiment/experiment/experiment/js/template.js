@@ -21,6 +21,7 @@ function make_slides(f) {
     start: function() {
       $(".err").hide();
       $(".err2").hide();
+      this.startTime = Date.now();
       $("#manipulation").html("While Vicki is outside playing, her sister,<br> Denise, moves the violin to <b>" + exp.condition + " container</b>.");
     },
     
@@ -41,12 +42,15 @@ function make_slides(f) {
         $(".err2").show();
         $(".err").hide();
       } else {
+      	 this.endTime = Date.now()
+      	 this.rt = (this.endTime - this.startTime)/1000;
         exp.data_trials.push({
           "trial_type" : "subject_responses",
           "response_red" : response_red,
           "response_green" : response_green,
           "response_purple" : response_purple,
-          "response_blue" : response_blue  
+          "response_blue" : response_blue,
+          "rt_in_seconds": this.rt
         });
         exp.go(); //make sure this is at the *end*, after you log your data
       }}
