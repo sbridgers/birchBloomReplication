@@ -96,7 +96,7 @@ slides.color_check = slide({
         language : $("#language").val(),
         enjoyment : $("#enjoyment").val(),
         asses : $('input[name="assess"]:checked').val(),
-        //colorblind : $('input[name="colorblind"]:checked').val(),
+        colorblind : $('input[name="colorblind"]:checked').val(),
         age : $("#age").val(),
         gender : $("#gender").val(),
         education : $("#education").val(),
