@@ -115,7 +115,8 @@ slides.color_check = slide({
           "system" : exp.system,
           "condition" : exp.condition,
           "subject_information" : exp.subj_data,
-          "time_in_minutes" : (Date.now() - exp.startT)/60000
+          "time_in_minutes" : (Date.now() - exp.startT)/60000,
+          "fingerprintData" : fingerprint
       };
       setTimeout(function() {turk.submit(exp.data);}, 1000);
     }
