@@ -115,7 +115,7 @@ d.tidy$response <- as.numeric(d.tidy$response)
 Next, I compute the mean response for each container by condition.
 
 ``` {r stats}
-#Functions to calculate standard error and 95% confidence intervals
+#Functions to calculate standard error of the mean and 95% confidence intervals
 sem <- function(x) {sd(x) / sqrt(length(x))}
 ci95 <- function(x) {sem(x) * 1.96}
 
