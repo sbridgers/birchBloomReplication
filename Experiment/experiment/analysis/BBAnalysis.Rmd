@@ -1,0 +1,132 @@
+---
+title: "Importing MTurk JSON data"
+output: html_document
+author: Sophie Bridgers
+---
+
+Birch and Bloom (2007) Replication Project Data Analysis
+=============================
+# Libraries
+
+```{r, message=FALSE}
+library(jsonlite)
+library(plyr)
+library(dplyr)
+library(tidyr)
+setwd("~/Documents/Research/Projects/Psych254Rep/Data")
+
+```
+
+# Read in all the JSON strings
+
+```{r comment=NA}
+
+read.file <- function(filename) {
+  con <- file(filename, "r", blocking = TRUE)
+  lines <- paste(readLines(con, warn = FALSE), collapse = "\n")
+  close(con)
+  lines
+}
+
+json.dir <- "results/"
+json.filenames <- paste0(json.dir, list.files(json.dir))
+json.strings <- Map(read.file, json.filenames)
+```
+
+# Convert JSON to a R data frame
+
+Merge all the json strings together, as if they are in a big array, and convert it to an R data frame:
+
+```{r comment=NA}
+strip.rownames <- function(x) {
+  rownames(x) <- NULL
+  x
+}
+
+json.superstring <- paste("[",paste(json.strings, collapse = ","),"]")
+assignments <- fromJSON( json.superstring )
+
+#Below I create separate data frames for the trial data (participants' responses), the condition data (which condition each participant is in), the total time data (how long the entire experiment took for each participant), and subject information data (the optional demographic information)
+
+#Participants responses
+trial.data <- Map(function(id, subject.trial.data) { cbind(workerid = id, subject.trial.data) },
+                  assignments$WorkerId,
+                  assignments$answers$trials)
+
+#Condition information
+condition.data <- Map(function(id, condition) { cbind(workerid = id, cond=condition) },
+                  assignments$WorkerId,
+                  assignments$answers$condition)
+
+#Length of experiment
+total.time.data <- Map(function(id, total.time.data) { cbind(workerid = id, total_time=total.time.data) },
+                  assignments$WorkerId,
+                  assignments$answers$time_in_minutes)
+
+#Subject/demographic information
+sub.data <- cbind(workerid = assignments$WorkerId,
+                  assignments$answers$subject_information)
+   
+trial.data <- strip.rownames(do.call(rbind, trial.data))
+condition.data <- strip.rownames(do.call(rbind, condition.data))
+total.time.data <- strip.rownames(do.call(rbind, total.time.data))
+
+condition.data <- data.frame(condition.data)
+total.time.data <- data.frame(total.time.data)
+
+#Return the data frames created above
+trial.data
+condition.data
+total.time.data
+sub.data
+
+
+```
+
+Next I combine the trial data, condition data, and total time data into a tidy data frame (i.e., I clean the data).
+
+``` {r join_data}
+
+#Join trial.data, condition.data, and total.time.data into wide data frame (I also re-order and re-name the columns)
+
+d.wide <- trial.data %>%
+        left_join(condition.data, by = "workerid") %>%
+        right_join(total.time.data, by = "workerid") %>%
+        select(workerid, cond, response_blue, response_red, 
+               response_purple, response_green, rt_in_seconds, total_time) %>%
+        dplyr::rename(blue=response_blue,
+               red=response_red,
+               purple=response_purple,
+               green=response_green,
+               rt_sec=rt_in_seconds,
+               totaltime_min=total_time)
+
+#Convert d.wide to tidy data frame, d.tidy (i.e., long format)
+
+d.tidy <- d.wide %>%
+    gather(container, response, blue,red,purple,green)
+
+#Convert response from character to numeric
+d.tidy$response <- as.numeric(d.tidy$response)
+```
+
+#Basic Stats
+
+Next, I compute the mean response for each container by condition.
+
+``` {r stats}
+#Functions to calculate standard error and 95% confidence intervals
+sem <- function(x) {sd(x) / sqrt(length(x))}
+ci95 <- function(x) {sem(x) * 1.96}
+
+#Computes the mean participant response for each container by condition
+d.stats <- d.tidy %>%
+    ungroup() %>%
+    group_by(cond, container) %>%
+    dplyr::summarise(avg_resp = mean(response),
+                     sterr = sem(response))
+
+d.stats
+
+```
+
