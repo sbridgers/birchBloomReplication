@@ -13,6 +13,7 @@ library(jsonlite)
 library(plyr)
 library(dplyr)
 library(tidyr)
+library(ggplot2)
 setwd("~/Documents/Research/Projects/Psych254Rep/Data")
 
 ```
@@ -66,6 +67,7 @@ total.time.data <- Map(function(id, total.time.data) { cbind(workerid = id, tota
 #Subject/demographic information
 sub.data <- cbind(workerid = assignments$WorkerId,
                   assignments$answers$subject_information)
+sub.data$gender = as.factor(sub.data$gender)
    
 trial.data <- strip.rownames(do.call(rbind, trial.data))
 condition.data <- strip.rownames(do.call(rbind, condition.data))
@@ -73,6 +75,7 @@ total.time.data <- strip.rownames(do.call(rbind, total.time.data))
 
 condition.data <- data.frame(condition.data)
 total.time.data <- data.frame(total.time.data)
+
 
 #Return the data frames created above
 trial.data
@@ -101,13 +104,28 @@ d.wide <- trial.data %>%
                rt_sec=rt_in_seconds,
                totaltime_min=total_time)
 
+#Convert responses from character to numeric
+d.wide$red <- as.numeric(d.wide$red)
+d.wide$blue <- as.numeric(d.wide$blue)
+d.wide$green <- as.numeric(d.wide$green)
+d.wide$purple <- as.numeric(d.wide$purple)
+
+#Calculate sum of responses to each container
+d.wide$response_sum <- d.wide$blue + d.wide$red + d.wide$purple + d.wide$green
+
+#Normalize responses
+d.wide$red_norm <- (d.wide$red / d.wide$response_sum)*100
+d.wide$blue_norm <- (d.wide$blue / d.wide$response_sum)*100
+d.wide$purple_norm <- (d.wide$purple / d.wide$response_sum)*100
+d.wide$green_norm <- (d.wide$green / d.wide$response_sum)*100
+
 #Convert d.wide to tidy data frame, d.tidy (i.e., long format)
 
 d.tidy <- d.wide %>%
-    gather(container, response, blue,red,purple,green)
+    gather(container, response_norm, blue_norm,red_norm,purple_norm,green_norm)
 
 #Convert response from character to numeric
-d.tidy$response <- as.numeric(d.tidy$response)
+#d.tidy$response <- as.numeric(d.tidy$response)
 ```
 
 #Basic Stats
@@ -115,7 +133,7 @@ d.tidy$response <- as.numeric(d.tidy$response)
 Next, I compute the mean response for each container by condition.
 
 ``` {r stats}
-#Functions to calculate standard error of the mean and 95% confidence intervals
+#Functions to calculate standard error and 95% confidence intervals
 sem <- function(x) {sd(x) / sqrt(length(x))}
 ci95 <- function(x) {sem(x) * 1.96}
 
@@ -123,10 +141,176 @@ ci95 <- function(x) {sem(x) * 1.96}
 d.stats <- d.tidy %>%
     ungroup() %>%
     group_by(cond, container) %>%
-    dplyr::summarise(avg_resp = mean(response),
-                     sterr = sem(response))
+    dplyr::summarise(avg_resp = mean(response_norm),
+                     sterr = sem(response_norm),
+                     ci95 = ci95(response_norm))
 
 d.stats
+```
+
+``` {r plotting data}
+
+#Alternative graph
+data_plot = ggplot(data = d.stats, 
+                   aes(x = container, y = avg_resp, fill = container)) + 
+  geom_bar(stat = "identity") + facet_wrap(~cond) +  
+  geom_errorbar(width = .1, aes(ymin = avg_resp - ci95, ymax = avg_resp + ci95)) +
+  scale_fill_manual(values=c("#0066CC", "#FF3333", "#990099", "#669933"),
+                      labels=c("Blue", "Red", "Purple", "Green")
+                    ) +
+  theme_classic() +
+  ylim(0, 100) +
+  theme(axis.ticks = element_blank(), axis.text.x = element_blank()) +
+  labs(x="Container", y="Mean Probability")
+
+data_plot
+
+d.stats$container<-factor(d.stats$container, labels = c("Blue","Red","Purple","Green"))
+d.stats$cond<-factor(d.stats$cond, labels = c("Ignorance", "Knowledge-implausible", "Knowledge-plausible"))
+
+#Graph in report
+ggplot(data = d.stats, 
+                   aes(x = container, y = avg_resp, fill = cond)) + 
+  geom_bar(stat = "identity", width=0.7, position=position_dodge(0.7))+  
+  geom_errorbar(position=position_dodge(0.7), width = 0.1,
+                aes(ymin = avg_resp - ci95, ymax = avg_resp + ci95)) +
+  scale_fill_brewer(type='qual',palette=1) +
+  theme_classic() +
+  ylim(0, 100 ) +
+  labs(x="Container", y="Mean Probability")+
+  guides(fill=guide_legend("Condition"))
+
+
+#ORIGINAL DATA
+
+#Load and organize original data
+d.orig = read.csv("BB_origData.csv")
+d.orig$container <- ordered(d.orig$container, levels=c("blue", "red", "purple", "green"), labels=c("Blue", "Red", "Purple", "Green"))
+
+d.orig$sterr = d.orig$sd / sqrt(d.orig$n)
+d.orig$ci95 = d.orig$sterr*1.96
+
+#Alternative graph
+data_Origplot = ggplot(data = d.orig, aes(x = container, y = avg_resp, fill = container)) + 
+  geom_bar(stat = "identity") + facet_wrap(~cond) + 
+  geom_errorbar(width = .1, aes(ymin = avg_resp - ci95, ymax = avg_resp + ci95)) +
+  scale_fill_manual(values=c("#0066CC", "#FF3333", "#990099", "#669933"),
+                      labels=c("Blue", "Red", "Purple", "Green")) +
+  theme_classic() +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ylim(0, 100) +
+  labs(x="Container", y="Mean Probability")
+
+data_Origplot
+
+d.orig$cond<-factor(d.orig$cond, labels = c("Ignorance", "Knowledge-implausible", "Knowledge-plausible"))
+
+#Graph in report
+ggplot(data = d.orig, 
+                   aes(x = container, y = avg_resp, fill = cond)) + 
+  geom_bar(stat = "identity", width=0.7, position=position_dodge(0.7))+  
+  geom_errorbar(position=position_dodge(0.7), width = 0.1,
+                aes(ymin = avg_resp - ci95, ymax = avg_resp + ci95)) +
+  scale_fill_brewer(type='qual',palette=1)+
+  theme_classic() +
+  ylim(0, 100 ) +
+  labs(x="Container", y="Mean Probability") +
+  guides(fill=guide_legend("Condition"))
 
 ```
 
+#Stats from Birch and Bloom
+
+``` {r BB_stats}
+
+#Subset data by condition
+
+#Ignorance condition
+d.another = filter(d.wide, cond=="another")
+
+#Know-plausible
+d.red = filter(d.wide, cond=="the red")
+
+#Know-implausible
+d.purple = filter(d.wide, cond=="the purple")
+
+#Compare red container: ignorance v. know-plausible
+
+t.IgKp.red = t.test(d.another$red_norm, d.red$red_norm, alternative = "two.sided", paired = FALSE); t.IgKp.red
+#t = -1.2029, df = 149.579, p-value = 0.2309
+
+#Compare blue container: ignorance v. know-plausible
+
+t.IgKp.blue = t.test(d.another$blue_norm, d.red$blue_norm, alternative = "two.sided", paired = FALSE); t.IgKp.blue
+#t = -0.5202, df = 128.554, p-value = 0.6038
+
+#Compare purple container: ignorance v. know-implausible
+
+t.IgKImp.purp = t.test(d.another$purple_norm, d.purple$purple_norm, alternative = "two.sided", paired = FALSE); t.IgKImp.purp
+#t = 0.3642, df = 133.889, p-value = 0.7163
+
+#Compare blue container: ignorance v. know-implausible
+
+t.IgKImp.blue = t.test(d.another$blue_norm, d.purple$blue_norm, alternative = "two.sided", paired = FALSE); t.IgKImp.blue
+#t = -1.2719, df = 128.666, p-value = 0.2057
+
+#Compare blue container: know-plausible v. know-implausible
+t.KpKImp.blue = t.test(d.red$blue_norm, d.purple$blue_norm, alternative = "two.sided", paired = FALSE); t.KpKImp.blue
+#t = -0.8818, df = 153.516, p-value = 0.3793
+
+#Compare the purple and red containers: know-plausible v. know-implausible
+t.KpKImp.purpred = t.test(d.red$red_norm, d.purple$purple_norm, alternative = "two.sided", paired = FALSE); t.KpKImp.purpred
+#t = 5.106, df = 147.936, p-value = 9.975e-07
+
+
+#Mixed model
+library(lme4)
+
+d.noGreen = filter(d.tidy, container != "green_norm")
+
+d.noGreen$container = factor(d.noGreen$container)
+
+#Orthogonal contrasts comparing blue and red containers
+contrasts(d.noGreen$container) <- matrix(c(1,-1,0, 1,1,-2), nrow=3, byrow=FALSE)
+contrasts(d.noGreen$container)
+
+contrasts(d.noGreen$cond)
+d.mixMod = lmer(response_norm ~ cond * container + (1 | workerid), d.noGreen)
+summary(d.mixMod)
+
+#Orthogonal contrasts comparing blue and purple containers
+contrasts(d.noGreen$container) <- matrix(c(1,0,-1, 1,-2,1), nrow=3, byrow=FALSE)
+contrasts(d.noGreen$container)
+
+d.mixMod2 = lmer(response_norm ~ cond * container + (1 | workerid), d.noGreen)
+summary(d.mixMod2)
+
+```
+
+``` {r}
+
+#Exploratory Analyses
+
+#Compare purple container: know-plausible v. know-implausible
+t.KpKImp.purp = t.test(d.red$purple_norm, d.purple$purple_norm, alternative = "two.sided", paired = FALSE); t.KpKImp.purp
+#t = -1.3429, df = 133.149, p-value = 0.1816
+
+#Compare red container: know-plausible v. know-implausible
+t.KpKImp.red = t.test(d.red$red_norm, d.purple$red_norm, alternative = "two.sided", paired = FALSE); t.KpKImp.red
+#t = 1.9449, df = 157.986, p-value = 0.05356
+
+```
+
+```{r subject_data}
+
+#Restructuring and reviewing demographic 
+sub.data$colorblind = factor(sub.data$colorblind)
+sub.data$gender = factor(sub.data$gender)
+sub.data$education = factor(sub.data$education)
+sub.data$age = as.numeric(sub.data$age)
+sub.data$asses = factor(sub.data$asses)
+
+age_sd = sd(sub.data$age, na.rm = TRUE); age_sd
+age_mean = mean(sub.data$age, na.rm = TRUE); age_mean
+
+```
